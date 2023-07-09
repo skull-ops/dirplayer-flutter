@@ -1,16 +1,15 @@
 # dirplayer
 
-A new Flutter project.
+A Flutter implementation of Shockwave player. This project is no longer being actively developed as Flutter has very poor performace when displaying raw in-memory images, which is part of the core functionality of Shockwave. PRs and contributions are welcome, especially if you find a way to work around the limitations around image displaying.
 
-## Getting Started
+This project would have not been possible without the extensive work of the Shockwave reverse engineering community. 
 
-This project is a starting point for a Flutter application.
+A lot of code has been reproduced from the following projects:
 
-A few resources to get you started if this is your first Flutter project:
+https://github.com/Earthquake-Project/Format-Documentation/
+https://github.com/Brian151/OpenShockwave/
+https://gist.github.com/MrBrax/1f3ae06c9320863f1d7b79b988c03e60
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Building for Web
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Add your DCRs to the `/web/dcr` directory, then run `flutter build web`.
