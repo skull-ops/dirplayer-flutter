@@ -7,7 +7,9 @@ This project would have not been possible without the extensive work of the Shoc
 A lot of code has been reproduced from the following projects:
 
 https://github.com/Earthquake-Project/Format-Documentation/
+
 https://github.com/Brian151/OpenShockwave/
+
 https://gist.github.com/MrBrax/1f3ae06c9320863f1d7b79b988c03e60
 
 ## Building for Web
