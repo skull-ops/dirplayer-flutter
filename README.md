@@ -12,6 +12,8 @@ https://github.com/Brian151/OpenShockwave/
 
 https://gist.github.com/MrBrax/1f3ae06c9320863f1d7b79b988c03e60
 
+https://www.scummvm.org/
+
 ## Building for Web
 
 Add your DCRs to the `/web/dcr` directory, then run `flutter build web`.
