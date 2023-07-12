@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:dirplayer/director/lingo/datum.dart';
+import 'package:dirplayer/director/lingo/datum/list.dart';
 import 'package:dirplayer/director/lingo/datum/var_ref.dart';
 import 'package:dirplayer/player/runtime/cast_member.dart';
 import 'package:dirplayer/player/runtime/color_ref.dart';
@@ -18,6 +19,29 @@ class SpriteChannel {
   Sprite sprite;
 
   SpriteChannel(this.number) : sprite = Sprite(number);
+}
+
+abstract class CursorRef {
+  Datum toDatum();
+}
+
+class SystemCursorRef extends CursorRef {
+  int cursorId;
+  SystemCursorRef(this.cursorId);
+
+  @override
+  Datum toDatum() {
+    return Datum.ofInt(cursorId);
+  }
+}
+class MemberCursorRef extends CursorRef {
+  List<int> members;
+  MemberCursorRef(this.members);
+
+  @override
+  Datum toDatum() {
+    return ListDatum(members.map((e) => Datum.ofInt(e)).toList());
+  }
 }
 
 // locH and locV are anchored to regPoint
@@ -43,7 +67,7 @@ class Sprite extends VMPropInterface implements HandlerInterface {
   ColorRef bgColor = ColorRef.fromRgb(0, 0, 0);
   CastMemberReference? member;
   List<ScriptInstance> scriptInstanceList = [];
-  int cursorInt = 0;
+  CursorRef? cursorRef;
 
   Sprite(this.number) : locZ = number;
 
@@ -309,10 +333,15 @@ class Sprite extends VMPropInterface implements HandlerInterface {
       );
     case "cursor":
       return MutableCallbackRef(
-        get: () => Datum.ofInt(cursorInt),
+        get: () => cursorRef?.toDatum() ?? Datum.ofInt(-1),
         set: (value) { 
-          assert(value.isInt());
-          cursorInt = value.toInt();
+          if (value.isInt()) {
+            cursorRef = SystemCursorRef(value.toInt());
+          } else if (value.isList()) {
+            cursorRef = MemberCursorRef(value.toList().map((e) => e.toInt()).toList());
+          } else {
+            throw Exception("Invalid value for cursor $value");
+          }
         } 
       );
     default:
