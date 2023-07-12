@@ -11,6 +11,7 @@ import 'package:dirplayer/player/runtime/data_reference.dart';
 import 'package:dirplayer/player/runtime/palette_ref.dart';
 import 'package:dirplayer/player/runtime/prop_interface.dart';
 import 'package:dirplayer/player/runtime/rect.dart';
+import 'package:dirplayer/player/runtime/score.dart';
 import 'package:dirplayer/player/runtime/vm.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image/image.dart' as img;
@@ -62,8 +63,10 @@ class ImageRef implements PropInterface, HandlerInterface {
         set: (value) {
           if (value.isSymbol()) {
             paletteRef = PaletteRef(BuiltInPalette.fromName(value.stringValue()).intValue);
-          } else {
+          } else if (value is VarRefDatum && value.value is PaletteRef) {
             paletteRef = value.toRef();
+          } else {
+            print("[!!] warn: setting palette to member is unsupported");
           }
         }
       );
