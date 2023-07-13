@@ -71,7 +71,7 @@ class _DebugInspectorState extends State<DebugInspector> {
 
   Widget buildScopeList() {
     return TreeView(
-      label: const Text("Scopes"), 
+      label: const Text("Call Stack"), 
       children: () => [
         for (var (index, scope) in widget.vm.scopes.indexed.toList().reversed) buildScope(index, scope)
       ]
