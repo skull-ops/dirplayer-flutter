@@ -71,6 +71,23 @@ class Sprite extends VMPropInterface implements HandlerInterface {
 
   Sprite(this.number) : locZ = number;
 
+  void reset() {
+    name = "";
+    puppet = false;
+    visible = false;
+    stretch = 0;
+    ink = 0;
+    blend = 100;
+    flipH = false;
+    flipV = false;
+    rotation = 0;
+    skew = 0;
+    backColor = 0;
+    member = null;
+    scriptInstanceList.clear();
+    cursorRef = null;
+  }
+
   Member? getMember(PlayerVM vm) {
     var memberRef = member;
     return memberRef != null ? vm.movie.castManager.findMemberByRef(memberRef) : null;

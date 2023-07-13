@@ -119,4 +119,12 @@ class Score {
       );
     }
   }
+
+  void reset() {
+    for (var channel in channels) {
+      if (channel.sprite.puppet) {
+        channel.sprite.reset();
+      }
+    }
+  }
 }

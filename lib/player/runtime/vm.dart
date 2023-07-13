@@ -1083,6 +1083,7 @@ class PlayerVM with ChangeNotifier {
     globals.clear();
     timeoutManager.clear();
     netManager.clear();
+    movie.score.reset();
     movie.currentFrame = 1;
     notifyListeners();
   }
