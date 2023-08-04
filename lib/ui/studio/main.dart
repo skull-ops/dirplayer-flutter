@@ -201,7 +201,8 @@ class _DirStudioState extends State<DirStudio> {
     } else if (member is FieldMember) {
       return FieldInspector(vm: widget.player.vm, member: member);
     } else {
-      return const SizedBox.shrink();
+      //return const SizedBox.shrink();
+      return Text(member.type.name);
     }
   }
 
