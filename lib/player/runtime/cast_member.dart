@@ -1,8 +1,4 @@
-
-import 'dart:typed_data';
-
 import 'package:dirplayer/director/castmembers.dart';
-import 'package:dirplayer/director/chunks/bitmap.dart';
 import 'package:dirplayer/director/chunks/cast_member.dart';
 import 'package:dirplayer/director/lingo/datum.dart';
 import 'package:dirplayer/director/lingo/datum/list.dart';
@@ -50,6 +46,8 @@ String memberTypeToSymbol(MemberType type) {
     return "script";
   case MemberType.kBitmapMember:
     return "bitmap";
+  case MemberType.kPaletteMember:
+    return "palette";
   default:
     throw Exception("Unknown member type $type");
   }
@@ -68,14 +66,8 @@ class Member implements PropInterface {
 
   Member({required int number, required this.type, required this.cast}) : 
     reference = CastMemberReference(cast.number, number),
-    number = (cast.number * 13000) + number,
+    number = getCastSlotNumber(cast.number, number),
     localCastNumber = number;
-
-  
-  Member duplicate(int number) {
-    // TODO: do this right
-    return Member(number: number, type: type, cast: cast);
-  }
 
   void restoreFrom(Member other) {
     name = other.name;
@@ -140,11 +132,6 @@ class FieldMember extends Member {
   int get lineHeight => fontSize + 3; // TODO
   IntRect get rect => IntRect(0, 0, width, height);
   int get charWidth => 7; // TODO
-
-  @override
-  Member duplicate(int number) {
-    return FieldMember(number: number, cast: cast, text: text);
-  }
 
   @override
   void restoreFrom(Member other) {
@@ -227,11 +214,6 @@ class TextMember extends Member implements HandlerInterface {
   int get lineHeight => fontSize + 3; // TODO
   int get charWidth => 7; // TODO
   IntRect get rect => IntRect(0, 0, width, height);
-
-  @override
-  Member duplicate(int number) {
-    return TextMember(number: number, cast: cast, text: text);
-  }
 
   @override
   void restoreFrom(Member other) {
@@ -357,11 +339,6 @@ class ScriptMember extends Member {
     required this.scriptType,
     super.type = MemberType.kTextMember
   });
-
-  @override
-  Member duplicate(int number) {
-    throw Exception("Duplicating a script is not supported");
-  }
 }
 
 class BitmapMember extends Member {
@@ -381,8 +358,11 @@ class BitmapMember extends Member {
   }) : regPoint = IntPoint(regX, regY);
 
   @override
-  Member duplicate(int number) {
-    return BitmapMember(number: number, cast: cast, imageRef: imageRef.clone(), regX: regX, regY: regY);
+  void restoreFrom(Member other) {
+    super.restoreFrom(other);
+    other as BitmapMember;
+    regPoint = other.regPoint;
+    imageRef.copyFrom(other.imageRef);
   }
 
   @override
@@ -420,7 +400,8 @@ class PaletteMember extends Member {
   });
 
   @override
-  Member duplicate(int number) {
-    return PaletteMember(number: number, cast: cast);
+  void restoreFrom(Member other) {
+    super.restoreFrom(other);
+    print("TODO restore palette");
   }
 }

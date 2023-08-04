@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:dirplayer/director/file.dart';
 import 'package:dirplayer/director/lingo/datum.dart';
-import 'package:dirplayer/player/runtime/cast_manager.dart';
 import 'package:dirplayer/player/runtime/cast_member.dart';
 import 'package:dirplayer/player/runtime/data_reference.dart';
 import 'package:dirplayer/player/runtime/sprite.dart';
@@ -10,6 +9,17 @@ import 'package:equatable/equatable.dart';
 
 import 'prop_interface.dart';
 import 'vm.dart';
+
+CastMemberReference castSlotNumberToMemberRef(int slotNumber) {
+  int castLib = slotNumber >> 16;
+  int castMember = slotNumber & 0xFFFF;
+
+  return CastMemberReference(castLib, castMember);
+}
+
+int getCastSlotNumber(int castLib, int castMember) {
+  return (castLib << 16) | (castMember & 0xFFFF);
+}
 
 class CastMemberReference with EquatableMixin implements VMPropInterface, HandlerInterface {
   int castLib;
@@ -45,15 +55,26 @@ class CastMemberReference with EquatableMixin implements VMPropInterface, Handle
       vm.movie.castManager.removeMemberWithRef(this);
       return Datum.ofVoid();
     case "duplicate":
-      var member = vm.movie.castManager.findMemberByRef(this);
-      int newNumber = -1;
-      if (member != null) {
-        var newNumber = member.cast.firstFreeMemberNumber;
-        var newMember = member.duplicate(newNumber);
-        member.restoreFrom(newMember);
-        member.cast.insertMemberAt(newNumber, newMember);
+      var destSlotNumber = argList.elementAtOrNull(0)?.toInt();
+      CastMemberReference? destMemberRef;
+      if (destSlotNumber != null) {
+        destMemberRef = castSlotNumberToMemberRef(destSlotNumber);
+      } else {
+        // TODO if slot number is not specified, which cast should be used?
+        return Future.error(Exception("Duplicating a member without a destination number is not supported"));
       }
-      return Datum.ofInt(newNumber);
+      var member = vm.movie.castManager.findMemberByRef(this);
+      var destCast = vm.movie.castManager.getCastByNumber(destMemberRef.castLib);
+      if (destCast == null) {
+        return Future.error(Exception("Duplicating member into non-existent cast"));
+      }
+      if (member != null) {
+        var newMember = destCast.addMemberAt(destMemberRef.castMember, memberTypeToSymbol(member.type));
+        newMember.restoreFrom(member);
+      } else {
+        return Future.error("Duplicating non-existent member");
+      }
+      return Datum.ofInt(destSlotNumber);
     default:
       var member = vm.movie.castManager.findMemberByRef(this);
       if (member != null && member is HandlerInterface) {
