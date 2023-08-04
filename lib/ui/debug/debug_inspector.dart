@@ -146,9 +146,20 @@ class _DebugInspectorState extends State<DebugInspector> {
     switch (value.type) {
     case DatumType.kDatumVarRef:
       return buildRefTree(value.toRef());
+    case DatumType.kDatumPropList:
+      return buildPropListTree(value.toMap());
     default:
       return Text(value.toString());
     }
+  }
+
+  Widget buildPropListTree(Map<Datum, Datum> map) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        for (var entry in map.entries) buildDatumTree(entry.key.toString(), entry.value)
+      ],
+    );
   }
 
   Widget buildRefTree(dynamic ref) {
