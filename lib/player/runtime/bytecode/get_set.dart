@@ -95,7 +95,7 @@ class GetSetBytecodeHandler implements BytecodeHandler {
           if (cast == null) {
             throw Exception("Cast not fount $castLib");
           } else {
-            vm.push(Datum.ofInt(cast.members.length));
+            vm.push(Datum.ofInt(cast.memberCount));
           }
         } else {
           vm.push(vm.getAnim2Prop(propertyID));

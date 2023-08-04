@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dirplayer/common/util.dart';
 import 'package:dirplayer/director/chunks/cast.dart';
 import 'package:dirplayer/director/chunks/cast_info.dart';
@@ -54,6 +56,7 @@ class CastLib extends PropInterface {
   }
 
   List<Script> get allScripts => _scripts.values.toList();
+  int get memberCount => members.isEmpty ? 0 : members.keys.reduce(max);
 
   Script? getScriptForMember(int memberNumber) {
     var member = findMemberByNumber(memberNumber);
