@@ -242,6 +242,10 @@ class ImageRef implements PropInterface, HandlerInterface {
         return Future.error(Exception("Invalid rect $destRectOrQuad"));
       }
       return Datum.ofBool(copyPixels(sourceImgObj, destRect, sourceRect, paramList));
+    case "trimWhiteSpace":
+      // TODO trimWhiteSpace
+      print("!!! TODO !!! ImageRef.trimWhiteSpace");
+      return Datum.ofVarRef(clone());
     default:
       return Future.error(Exception("Unknown handler $handlerName for $this"));
     }

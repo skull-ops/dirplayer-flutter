@@ -126,6 +126,9 @@ class FieldMember extends Member {
   String fontStyle = "plain";
   int fontSize = 12;
   int width = 100;
+  bool autoTab = false; // Tabbing order depends on sprite number order, not position on the Stage.
+  bool editable = false;
+  int border = 0;
   FieldMember({required super.number, required super.cast, required this.text, super.type = MemberType.kTextMember });
 
   int get height => lineHeight; // TODO use line spacing
@@ -189,6 +192,21 @@ class FieldMember extends Member {
         return MutableCallbackRef(
           get: () => Datum.ofVarRef(rect), 
           set: (value) => width = value.toRef<IntRect>().width
+        );
+      case "autoTab":
+        return MutableCallbackRef(
+          get: () => Datum.ofBool(autoTab), 
+          set: (value) => autoTab = value.toBool()
+        );
+      case "editable":
+        return MutableCallbackRef(
+          get: () => Datum.ofBool(editable), 
+          set: (value) => editable = value.toBool()
+        );
+      case "border":
+        return MutableCallbackRef(
+          get: () => Datum.ofInt(border), 
+          set: (value) => border = value.toInt()
         );
       default:
         return super.getPropRef(propName);
