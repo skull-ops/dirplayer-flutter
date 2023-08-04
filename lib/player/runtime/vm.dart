@@ -131,7 +131,7 @@ class PlayerVM with ChangeNotifier {
     _isPlaying = true;
     _isScriptPaused = false;
     runVM(); // TODO store this somewhere
-    dispatch("prepareMovie", []);
+    await dispatch("prepareMovie", []);
     while (_isPlaying) {
       int fps = movie.puppetTempo > 0 ? movie.puppetTempo : 1;
       await playFrame();
@@ -992,7 +992,7 @@ class PlayerVM with ChangeNotifier {
       try {
         item.completer.complete(await item.callback().catchError(Future<Datum>.error));
       } catch (err) {
-        onError(err);
+        await onError(err);
         break;
       }
     }

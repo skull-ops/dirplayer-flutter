@@ -94,13 +94,13 @@ class CastManager with ChangeNotifier {
           netManager: netManager,
         );
         if (castChunk != null) {
-          await cast.applyCastChunk(dir, castChunk);
+          cast.applyCastChunk(dir, castChunk);
         }
         mappedCasts.add(cast);
       }
       casts.addAll(mappedCasts);
     }
-    preloadCasts(netManager);
+    await preloadCasts(netManager);
   }
 
   Uri? normalizeCastLibPath(Uri basePath, String filePath) {
@@ -119,7 +119,7 @@ class CastManager with ChangeNotifier {
     for (var cast in casts) {
       if (cast.isLoading && cast.fileName.isNotEmpty) {
         // TODO: wait until finish depending on preload mode
-        cast.preload().then((value) => notifyListeners());
+        await cast.preload().then((value) => notifyListeners());
       }
     }
   }

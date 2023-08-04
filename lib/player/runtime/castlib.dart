@@ -125,16 +125,16 @@ class CastLib extends PropInterface {
     return Script(chunk.member!.getName(), chunk, dirScriptMember.scriptType);
   }
 
-  Future applyCastChunk(DirectorFile dir, CastChunk castChunk) async {
+  void applyCastChunk(DirectorFile dir, CastChunk castChunk) {
     var lctx = castChunk.lctx;
     this.lctx = lctx;
     for (var dirMember in castChunk.members.values) {
-      var member = await memberChunkToMember(dir, dirMember.id, dirMember, lctx);
+      var member = memberChunkToMember(dir, dirMember.id, dirMember, lctx);
       members[dirMember.id] = member;
     }
   }
 
-  Future<Member> memberChunkToMember(DirectorFile dir, int number, CastMemberChunk chunk, ScriptContextChunk? lctx) async {
+  Member memberChunkToMember(DirectorFile dir, int number, CastMemberChunk chunk, ScriptContextChunk? lctx) {
     Member result;
     switch (chunk.type) {
     case dir_castmembers.MemberType.kTextMember: {
