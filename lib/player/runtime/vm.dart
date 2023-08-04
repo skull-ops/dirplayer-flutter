@@ -133,7 +133,6 @@ class PlayerVM with ChangeNotifier {
     runVM(); // TODO store this somewhere
     dispatch("prepareMovie", []);
     while (_isPlaying) {
-      print("current frame: ${movie.currentFrame}");
       int fps = movie.puppetTempo > 0 ? movie.puppetTempo : 1;
       await playFrame();
       if (!_isPlaying) {
