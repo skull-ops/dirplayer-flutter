@@ -106,6 +106,14 @@ class PropListWrapper {
       } else {
         return datum.toMap().values.elementAt(keyIndex);
       }
+    case "getProp":
+      var propKey = args[0];
+      var keyIndex = getKeyIndex(datum, propKey);
+      if (keyIndex == -1) {
+        throw Exception("Unknown prop $propKey for prop list");
+      } else {
+        return datum.toMap().values.elementAt(keyIndex);
+      }
     case "sort":
       if (datum.toMap().isNotEmpty) {
         throw Exception("Cannot sort non-empty map ${datum.toMap()}");
