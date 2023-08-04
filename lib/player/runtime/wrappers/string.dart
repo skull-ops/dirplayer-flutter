@@ -149,8 +149,6 @@ class StringWrapper {
       var start = args[1];
       var end = args.elementAtOrNull(2);
       return getPropRef(vm, stringDatum, propName, start, end ?? start /* TODO verify this */);
-    //case "delete":
-    //  throw Exception(" Delete not implemented");
     }
     
     throw Exception("Undefined handler $handlerName for string");

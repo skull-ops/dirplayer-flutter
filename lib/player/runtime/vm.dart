@@ -843,14 +843,12 @@ class PlayerVM with ChangeNotifier {
     // TODO use refactored datum interface
     //trace("$obj.${handlerName}(${argList.join(", ")})");
 
-    if (obj is StringDatum) {
-      return StringWrapper.callHandler(this, obj, handlerName, argList);
-    } else if (obj is HandlerInterface) {
+    if (obj is HandlerInterface) {
       return await (obj as HandlerInterface).callHandler(this, handlerName, argList);
+    } else if (obj is StringDatum) {
+      return StringWrapper.callHandler(this, obj, handlerName, argList);
     } else {
       switch (obj.type) {
-      case DatumType.kDatumString:
-        return StringWrapper.callHandler(this, obj, handlerName, argList);
       case DatumType.kDatumPropList:
         return PropListWrapper.callHandler(this, obj, handlerName, argList);
       default:

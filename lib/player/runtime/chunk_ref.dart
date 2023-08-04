@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dirplayer/common/util.dart';
 import 'package:dirplayer/director/lingo/chunk_expr_type.dart';
 import 'package:dirplayer/player/runtime/wrappers/string.dart';
@@ -24,6 +26,8 @@ abstract class StringChunkRef {
         throw Exception("Invalid string chunk type $chunkType");
     }
   }
+
+  String deletingFrom(String original);
 }
 
 class ItemStringChunkRef extends StringChunkRef {
@@ -39,6 +43,11 @@ class ItemStringChunkRef extends StringChunkRef {
   String stringValue(String value) {
     return getItems(value).join(itemDelimiter);
   }
+
+  @override
+  String deletingFrom(String original) {
+    throw Exception("Delete not implemented for ItemStringChunkRef");
+  }
 }
 
 class CharStringChunkRef extends StringChunkRef {
@@ -52,6 +61,16 @@ class CharStringChunkRef extends StringChunkRef {
   @override
   String stringValue(String value) {
     return getItems(value).join();
+  }
+
+  @override
+  String deletingFrom(String original) {
+    var normalizedStart = min(max(startNumber - 1, 0), original.length);
+    var normalizedEnd = min(max(endNumber, normalizedStart), original.length);
+
+    var before = original.substring(0, normalizedStart);
+    var after = original.substring(normalizedEnd);
+    return before + after;
   }
 }
 
@@ -67,6 +86,11 @@ class WordStringChunkRef extends StringChunkRef {
   String stringValue(String value) {
     return getItems(value).join(" ");
   }
+
+  @override
+  String deletingFrom(String original) {
+    throw Exception("Delete not implemented for WordStringChunkRef");
+  }
 }
 
 class LineStringChunkRef extends StringChunkRef {
@@ -80,5 +104,10 @@ class LineStringChunkRef extends StringChunkRef {
   @override
   String stringValue(String value) {
     return getItems(value).join(getLineSeparator());
+  }
+
+  @override
+  String deletingFrom(String original) {
+    throw Exception("Delete not implemented for LineStringChunkRef");
   }
 }

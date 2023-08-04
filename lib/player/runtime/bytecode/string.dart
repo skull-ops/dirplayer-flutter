@@ -60,13 +60,13 @@ class StringBytecodeHandler extends BytecodeHandler {
 
     StringChunkRef result;
     if (firstLine != 0 || lastLine != 0) {
-      result = StringChunkRef.fromChunkType(ChunkExprType.kChunkLine, firstItem.toInt(), lastItem.toInt());
+      result = StringChunkRef.fromChunkType(ChunkExprType.kChunkLine, firstLine.toInt(), lastLine.toInt());
     } else if (firstItem != 0 || lastItem != 0) {
       result = StringChunkRef.fromChunkType(ChunkExprType.kChunkItem, firstItem.toInt(), lastItem.toInt(), arg: vm.itemDelimiter);
     } else if (firstWord != 0 || lastWord != 0) {
-      result = StringChunkRef.fromChunkType(ChunkExprType.kChunkWord, firstItem.toInt(), lastItem.toInt());
+      result = StringChunkRef.fromChunkType(ChunkExprType.kChunkWord, firstWord.toInt(), lastWord.toInt());
     } else if (firstChar != 0 || lastChar != 0) {
-      result = StringChunkRef.fromChunkType(ChunkExprType.kChunkChar, firstItem.toInt(), lastItem.toInt());
+      result = StringChunkRef.fromChunkType(ChunkExprType.kChunkChar, firstChar.toInt(), lastChar.toInt());
     } else {
       throw Exception("Invalid OpCode.kOpGetChunk call");
     }
