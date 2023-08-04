@@ -324,7 +324,7 @@ class TextMember extends Member implements HandlerInterface {
   ImageRef renderToImage() {
     // TODO
     var result = img.Image(width: width, height: height, numChannels: 4, format: img.Format.uint8);
-    img.drawString(result, "$text [TODO]", font: img.arial14, color: color.toImgColor());
+    img.drawString(result, text, font: img.arial14, color: color.toImgColor());
     return ImageRef(result, 32, PaletteRef(BuiltInPalette.systemDefault.intValue));
   }
 
