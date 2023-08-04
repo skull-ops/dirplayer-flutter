@@ -9,12 +9,17 @@ import 'package:dirplayer/player/runtime/bytecode/string.dart';
 import '../../../director/lingo/bytecode.dart';
 import '../vm.dart';
 
+typedef BytecodeHandlerFunctionSync = HandlerExecutionResult Function(PlayerVM vm, Bytecode bytecode);
+typedef BytecodeHandlerFunctionAsync = Future<HandlerExecutionResult> Function(PlayerVM vm, Bytecode bytecode);
+
 abstract class BytecodeHandler {
-  Future<HandlerExecutionResult?> executeBytecode(PlayerVM vm, Bytecode bytecode);
+  Map<OpCode, BytecodeHandlerFunctionSync> get syncHandlers => {};
+  Map<OpCode, BytecodeHandlerFunctionAsync> get asyncHandlers => {};
 }
 
 class BytecodeHandlerManager {
-  final List<BytecodeHandler> handlers = [];
+  final syncHandlerMap = <int, BytecodeHandlerFunctionSync>{};
+  final asyncHandlerMap = <int, BytecodeHandlerFunctionAsync>{};
 
   BytecodeHandlerManager() {
     add(ArithmeticBytecodeHandler());
@@ -25,16 +30,41 @@ class BytecodeHandlerManager {
     add(StringBytecodeHandler());
   }
 
+  bool containsHandler(OpCode opCode) {
+    return syncHandlerMap.containsKey(opCode.rawValue) || asyncHandlerMap.containsKey(opCode.rawValue);
+  }
+
+  void registerSyncOpcode(OpCode opCode, BytecodeHandlerFunctionSync function) {
+    if (containsHandler(opCode)) {
+      throw Exception("OpCode already registered: $opCode");
+    }
+    syncHandlerMap[opCode.rawValue] = function;
+  }
+
   void add(BytecodeHandler handler) {
-    handlers.add(handler);
+    for (var entry in handler.syncHandlers.entries) {
+      registerSyncOpcode(entry.key, entry.value);
+    }
+    for (var entry in handler.asyncHandlers.entries) {
+      registerAsyncOpcode(entry.key, entry.value);
+    }
+  }
+
+  void registerAsyncOpcode(OpCode opCode, BytecodeHandlerFunctionAsync function) {
+    if (containsHandler(opCode)) {
+      throw Exception("OpCode already registered: $opCode");
+    }
+    asyncHandlerMap[opCode.rawValue] = function;
   }
 
   Future<HandlerExecutionResult> executeBytecode(PlayerVM vm, Bytecode bytecode) async {
-    for (var handler in handlers) {
-      var result = await handler.executeBytecode(vm, bytecode);
-      if (result != null) {
-        return result;
-      }
+    var syncHandler = syncHandlerMap[bytecode.opcode.rawValue];
+    if (syncHandler != null) {
+      return syncHandler(vm, bytecode);
+    }
+    var asyncHandler = asyncHandlerMap[bytecode.opcode.rawValue];
+    if (asyncHandler != null) {
+      return await asyncHandler(vm, bytecode);
     }
     return Future.error(Exception("No handler for OpCode ${bytecode.opcode}"));
   } 
