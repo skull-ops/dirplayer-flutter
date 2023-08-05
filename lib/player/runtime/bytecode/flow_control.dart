@@ -53,7 +53,7 @@ class FlowControlBytecodeHandler extends BytecodeHandler {
     var argListDatum = vm.pop();
     var isNoRet = argListDatum.type == DatumType.kDatumArgListNoRet;
     var args = argListDatum.toList();
-    var handler = vm.currentScope!.script.handlers[bytecode.obj];
+    var handler = vm.currentScope!.script.getOwnHandlerAt(bytecode.obj);
 
     var result = await vm.callHandler(vm.currentScope!.script, vm.currentScope!.receiver, handler, args);
     if (!isNoRet) {

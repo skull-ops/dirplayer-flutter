@@ -45,7 +45,7 @@ class _ScriptInspectorState extends State<ScriptInspector> {
         width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-        children: [for (var handler in widget.script.handlers) buildHandlerContent(context, handler)],
+        children: [for (var handler in widget.script.getOwnHandlers()) buildHandlerContent(context, handler)],
       )
     );
   }

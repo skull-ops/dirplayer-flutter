@@ -9,15 +9,19 @@ import 'package:dirplayer/player/runtime/prop_interface.dart';
 import 'package:dirplayer/player/runtime/vm.dart';
 import 'package:logging/logging.dart';
 
+import '../../common/case_insensitive_map.dart';
+
 class Script implements HandlerInterface {
   final log = Logger("Script");
   String name;
   ScriptChunk chunk;
   ScriptType scriptType;
+  final Map<String, Handler> _handlers;
+  final List<String> _handlerNames;
 
-  Script(this.name, this.chunk, this.scriptType);
-
-  List<Handler> get handlers => chunk.handlers;
+  Script(this.name, this.chunk, this.scriptType) :
+    _handlers = createCaseInsensitiveMap(map: Map.fromIterable(chunk.handlers, key: (e) => e.name)),
+    _handlerNames = chunk.handlers.map((e) => e.name).toList();
 
   @override
   Future<Datum> callHandler(PlayerVM vm, String handlerName, List<Datum> argList) async {
@@ -49,9 +53,17 @@ class Script implements HandlerInterface {
     }
   }
 
+  Iterable<Handler> getOwnHandlers() {
+    return _handlers.values;
+  }
+
+  Handler getOwnHandlerAt(int index) {
+    String handlerName = _handlerNames[index];
+    return getOwnHandler(handlerName)!;
+  }
+
   Handler? getOwnHandler(String name) {
-    var handler = handlers.where((element) => element.name.toLowerCase() == name.toLowerCase()).firstOrNull;
-    return handler;
+    return _handlers[name];
   }
 
   (Script, Handler)? getHandler(String name) {

@@ -55,7 +55,7 @@ class CastLib extends PropInterface {
     return castListEntry.filePath.isNotEmpty;
   }
 
-  List<Script> get allScripts => _scripts.values.toList();
+  Iterable<Script> get allScripts => _scripts.values;
   int get memberCount => members.isEmpty ? 0 : members.keys.reduce(max);
 
   Script? getScriptForMember(int memberNumber) {

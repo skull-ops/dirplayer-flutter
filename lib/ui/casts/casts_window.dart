@@ -67,7 +67,7 @@ class _CastsWindowState extends State<CastsWindow> {
   Widget buildMemberNode(Member member) {
     if (member is ScriptMember) {
       var script = member.cast.getScriptForMember(member.number);
-      var handlers = script?.handlers ?? [];
+      var handlers = script?.getOwnHandlers() ?? [];
       return TreeView(
         label: buildMemberLabel(member), 
         children: () => [for (var handler in handlers) buildScriptHandlerNode(handler)]

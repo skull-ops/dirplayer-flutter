@@ -862,7 +862,7 @@ class PlayerVM with ChangeNotifier {
 
     var movieScripts = movie.castManager.getMovieScripts();
     for (var script in movieScripts) {
-      var handler = script.handlers.where((element) => element.name == name).firstOrNull;
+      var handler = script.getOwnHandler(name);
       if (handler != null) {
         return await callHandler(script, null, handler, argList);
       }
