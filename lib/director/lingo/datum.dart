@@ -33,7 +33,7 @@ abstract class Datum {
   DatumType get type;
 
   static Datum ofNull() => nullDatum;
-	static Datum ofVoid() => VoidDatum();
+	static Datum ofVoid() => voidDatum;
 	static Datum ofInt(int val) => IntDatum(val);
   static Datum ofFloat(double val) => FloatDatum(val);
   static Datum ofString(String val, {DatumType type = DatumType.kDatumString}) => StringDatum(val, type);

@@ -1,17 +1,15 @@
 
 import 'package:dirplayer/director/lingo/addable.dart';
-import 'package:dirplayer/director/lingo/datum/int.dart';
-import 'package:dirplayer/player/runtime/compare.dart';
 import 'package:dirplayer/player/runtime/data_reference.dart';
 import 'package:dirplayer/player/runtime/prop_interface.dart';
 
 import '../../../common/codewriter.dart';
 import '../datum.dart';
 
-class VoidDatum extends Datum implements DatumComparable, DatumEquatable, PropInterface {
+class _VoidDatum extends Datum implements DatumComparable, DatumEquatable, PropInterface {
   @override final type = DatumType.kDatumVoid;
 
-  VoidDatum();
+  _VoidDatum();
   
   @override
   bool isVoid() => true;
@@ -69,3 +67,5 @@ class VoidDatum extends Datum implements DatumComparable, DatumEquatable, PropIn
     }
   }
 }
+
+final voidDatum = _VoidDatum();
