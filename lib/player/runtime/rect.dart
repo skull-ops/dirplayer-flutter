@@ -8,7 +8,7 @@ import 'package:dirplayer/player/runtime/data_reference.dart';
 import 'package:dirplayer/player/runtime/prop_interface.dart';
 import 'package:dirplayer/player/runtime/vm.dart';
 
-class IntPoint extends PropInterface implements Addable, Subtractable {
+class IntPoint extends PropInterface implements Addable, Subtractable, HandlerInterface {
   int locH;
   int locV;
 
@@ -71,6 +71,18 @@ class IntPoint extends PropInterface implements Addable, Subtractable {
     }
 
     return Datum.ofVarRef(IntPoint(locH - otherX, locV - otherY));
+  }
+  
+  @override
+  Future<Datum> callHandler(PlayerVM vm, String handlerName, List<Datum> argList) async {
+    switch (handlerName) {
+    case "getAt":
+      int pos = argList[0].toInt();
+      var listValue = [locH, locV];
+      return Datum.ofInt(listValue[pos - 1]);
+    default:
+      throw Exception("Unknown handler $handlerName for $this");
+    }
   }
 }
 
