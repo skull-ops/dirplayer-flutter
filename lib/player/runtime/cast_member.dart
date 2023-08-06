@@ -33,6 +33,10 @@ class InvalidMember implements PropInterface {
         return CallbackRef(
           get: () => Datum.ofSymbol("empty"), 
         );
+      case "castLibNum":
+        return CallbackRef(
+          get: () => Datum.ofInt(-1), 
+        );
       default:
         return null;
     }
@@ -101,6 +105,10 @@ class Member implements PropInterface {
       case "type":
         return CallbackRef(
           get: () => Datum.ofSymbol(memberTypeToSymbol(type)), 
+        );
+      case "castLibNum":
+        return CallbackRef(
+          get: () => Datum.ofInt(cast.number), 
         );
       case "color":
         return MutableCallbackRef(
