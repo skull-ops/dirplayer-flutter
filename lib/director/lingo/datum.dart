@@ -1,4 +1,5 @@
 
+import 'package:dirplayer/director/lingo/datum/datum_null.dart';
 import 'package:dirplayer/director/lingo/datum/list.dart';
 import 'package:dirplayer/director/lingo/datum/node_list.dart';
 import 'package:dirplayer/director/lingo/datum/prop_list.dart';
@@ -14,6 +15,7 @@ import 'datum/int.dart';
 import 'node.dart';
 
 enum DatumType {
+  kDatumNull,
 	kDatumVoid,
 	kDatumSymbol,
 	kDatumVarRef,
@@ -30,6 +32,7 @@ enum DatumType {
 abstract class Datum {
   DatumType get type;
 
+  static Datum ofNull() => nullDatum;
 	static Datum ofVoid() => VoidDatum();
 	static Datum ofInt(int val) => IntDatum(val);
   static Datum ofFloat(double val) => FloatDatum(val);
