@@ -33,6 +33,8 @@ import 'package:dirplayer/player/runtime/stage.dart';
 import 'package:dirplayer/player/runtime/timeout.dart';
 import 'package:dirplayer/player/runtime/wrappers/prop_list.dart';
 import 'package:dirplayer/player/runtime/wrappers/string.dart';
+import 'package:dirplayer/player/runtime/xtras/interface.dart';
+import 'package:dirplayer/player/runtime/xtras/manager.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart' as img;
@@ -603,6 +605,9 @@ class PlayerVM with ChangeNotifier {
       } else if (firstArg is VarRefDatum && firstArg.value is Script && firstArg.value is! ScriptInstance) {
         var script = firstArg.toRef<Script>();
         result = await script.callHandler(this, "new", argList.sublist(1));
+      } else if (firstArg is VarRefDatum && firstArg.value is XtraFactory) {
+        var xtraFactory = firstArg.toRef<XtraFactory>();
+        result = Datum.ofVarRef(await xtraFactory.newInstance(argList.sublist(1)));
       } else {
         throw Exception("Unsupported new call");
       }
@@ -753,6 +758,15 @@ class PlayerVM with ChangeNotifier {
         return Datum.ofInt(value.toInt().abs());
       } else {
         return Future.error(Exception("Invalid abs call for $value"));
+      }
+    case "xtra":
+      assert(argList.length == 1);
+      var xtraName = argList.first.stringValue();
+      var xtra = XtraManager.getXtra(xtraName);
+      if (xtra != null) {
+        return Datum.ofVarRef(xtra);
+      } else {
+        return Future.error(Exception("Unknown xtra $xtraName"));
       }
     default:
       return Future.error(Exception("Handler not defined $name($argList)"));
