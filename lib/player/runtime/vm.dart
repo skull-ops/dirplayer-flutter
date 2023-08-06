@@ -81,6 +81,7 @@ class PlayerVM with ChangeNotifier {
   final random = Random();
   final bytecodeHandlerManager = BytecodeHandlerManager();
   dynamic alertHook;
+  int keyboardFocusSprite = -1; // Setting keyboardFocusSprite to -1 returns keyboard focus control to the Score, and setting it to 0 disables keyboard entry into any editable sprite.
   Stage stage = Stage();
   int intCursorNum = 0;
   final netManager = NetManager();
@@ -778,6 +779,8 @@ class PlayerVM with ChangeNotifier {
         return Datum.ofInt(DateTime.now().difference(startTime).inMilliseconds);
       case "productVersion":
         return Datum.ofString("10.1");
+      case "keyboardFocusSprite":
+        return Datum.ofInt(keyboardFocusSprite);
       case "mouseH":
         return Datum.ofInt(mouseLoc.locH);
       case "mouseV":
@@ -802,6 +805,10 @@ class PlayerVM with ChangeNotifier {
         } else {
           throw Exception("Object or 0 expected for alertHook");
         }
+        break;
+      case "keyboardFocusSprite":
+        // TODO
+        keyboardFocusSprite = value.toInt();
         break;
       default:
         setObjProp(movie, propName, value);
