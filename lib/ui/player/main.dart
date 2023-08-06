@@ -127,6 +127,16 @@ class _PlayerUIState extends State<PlayerUI> {
       spriteWidget = BitmapMemberView(vm: widget.player.vm, memberRef: member.reference, ink: sprite.ink);
       offsetX = -member.regX;
       offsetY = -member.regY;
+    } else if (member is FieldMember) {
+      spriteWidget = SizedBox(
+        width: sprite.width.toDouble(),
+        height: sprite.height.toDouble(),
+        child: TextField(
+          textAlign: TextAlign.center,
+          decoration: null,
+          onChanged: (value) => member.text = value, // TODO call keyDown
+        ),
+      );
     } else {
       spriteWidget = const SizedBox.shrink();
     }
