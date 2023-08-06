@@ -374,6 +374,6 @@ class Sprite extends VMPropInterface implements HandlerInterface {
         return await script.callHandler(vm, handlerName, argList);
       }
     }
-    throw UnknownHandlerException(handlerName, this);
+    return Future.error(UnknownHandlerException(handlerName, argList, this));
   }
 }

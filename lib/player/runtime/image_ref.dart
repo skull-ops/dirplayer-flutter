@@ -248,7 +248,7 @@ class ImageRef implements PropInterface, HandlerInterface {
       print("!!! TODO !!! ImageRef.trimWhiteSpace");
       return Datum.ofVarRef(clone());
     default:
-      return Future.error(UnknownHandlerException(handlerName, this));
+      return Future.error(UnknownHandlerException(handlerName, argList, this));
     }
   }
 

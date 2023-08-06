@@ -81,7 +81,7 @@ class CastMemberReference with EquatableMixin implements VMPropInterface, Handle
       if (member != null && member is HandlerInterface) {
         return (member as HandlerInterface).callHandler(vm, handlerName, argList);
       } else {
-        throw UnknownHandlerException(handlerName, this);
+        return Future.error(UnknownHandlerException(handlerName, argList, this));
       }
     }
   }

@@ -50,7 +50,7 @@ class Script implements HandlerInterface {
       var (handlerScript, handler) = handlerPair;
       return await vm.callHandler(handlerScript, null, handler, argList);
     } else {
-      throw UnknownHandlerException(handlerName, this);
+      throw UnknownHandlerException(handlerName, argList, this);
     }
   }
 
@@ -161,7 +161,7 @@ class ScriptInstance implements HandlerInterface, PropInterface, CustomSetPropIn
         throw Exception("Invalid count call");
       }
     default:
-      throw UnknownHandlerException("$handlerName($args)", this);
+      throw UnknownHandlerException(handlerName, args, this);
     }
   }
 

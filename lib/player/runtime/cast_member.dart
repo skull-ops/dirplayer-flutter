@@ -343,7 +343,7 @@ class TextMember extends Member implements HandlerInterface {
         return Datum.ofVarRef(IntPoint(charWidth * (charPos - 1), lineHeight));
       }
     default:
-      return Future.error(UnknownHandlerException(handlerName, this));
+      return Future.error(UnknownHandlerException(handlerName, argList, this));
     }
   }
 }

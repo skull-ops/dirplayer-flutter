@@ -82,7 +82,7 @@ class IntPoint extends PropInterface implements Addable, Subtractable, HandlerIn
       var listValue = [locH, locV];
       return Datum.ofInt(listValue[pos - 1]);
     default:
-      throw UnknownHandlerException(handlerName, this);
+      return Future.error(UnknownHandlerException(handlerName, argList, this));
     }
   }
 }
@@ -138,7 +138,7 @@ class IntRect extends PropInterface implements HandlerInterface, Addable, Subtra
       listValue[pos - 1] = value;
       return Datum.ofVoid();
     default:
-      return Future.error(UnknownHandlerException(handlerName, this));
+      return Future.error(UnknownHandlerException(handlerName, argList, this));
     }
   }
 

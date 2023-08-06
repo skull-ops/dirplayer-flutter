@@ -155,7 +155,7 @@ class ListDatum extends Datum implements HandlerInterface, PropInterface, Addabl
       var element = args.first;
       return Datum.ofInt(value.indexOf(element) + 1);
     }
-    throw UnknownHandlerException(handlerName, this);
+    return Future.error(UnknownHandlerException(handlerName, args, this));
   }
 
   @override

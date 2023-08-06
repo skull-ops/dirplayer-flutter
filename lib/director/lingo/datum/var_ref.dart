@@ -49,7 +49,7 @@ class VarRefDatum extends Datum implements HandlerInterface, VMPropInterface, Pr
     if (value is HandlerInterface) {
       return await value.callHandler(vm, handlerName, argList);
     } else {
-      return Future.error(UnknownHandlerException(handlerName, value));
+      return Future.error(UnknownHandlerException(handlerName, argList, value));
     }
   }
 

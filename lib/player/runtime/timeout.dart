@@ -32,7 +32,7 @@ class TimeoutRef implements HandlerInterface, PropInterface {
       timeoutManager.forgetTimeout(name);
       return Datum.ofVoid();
     default:
-      throw UnknownHandlerException(handlerName, this);
+      return Future.error(UnknownHandlerException(handlerName, argList, this));
     }
   }
 
