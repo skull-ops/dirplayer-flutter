@@ -67,10 +67,14 @@ class _PlayerUIState extends State<PlayerUI> {
   Widget build(BuildContext context) {
     return RepaintBoundary(
       key: stageRenderKey,
-      child: ListenableBuilder(
-        listenable: widget.player.vm,
-        builder: (context, child) => buildMovieUI(),
-      )
+      child: Listener(
+        onPointerMove: (e) => widget.player.vm.onMouseMove(e.localPosition.dx.toInt(), e.localPosition.dy.toInt()),
+        onPointerHover: (e) => widget.player.vm.onMouseMove(e.localPosition.dx.toInt(), e.localPosition.dy.toInt()),
+        child: ListenableBuilder(
+          listenable: widget.player.vm,
+          builder: (context, child) => buildMovieUI(),
+        ),
+      ),
     );
   }
 
@@ -116,6 +120,19 @@ class _PlayerUIState extends State<PlayerUI> {
     );
   }
 
+  Widget buildSpriteGesturizer(Sprite sprite, Widget child) {
+    // TODO add mouseWithin
+    return Listener(
+      onPointerDown: (_) {
+        widget.player.vm.dispatchToSprite(sprite, "mouseDown");
+      },
+      onPointerUp: (_) {
+        widget.player.vm.dispatchToSprite(sprite, "mouseUp");
+      },
+      child: child,
+    );
+  }
+
   Widget buildSprite(Sprite sprite) {
     var memberRef = sprite.member;
     var member = memberRef != null ? widget.player.vm.movie.castManager.findMemberByRef(memberRef) : null;
@@ -144,7 +161,7 @@ class _PlayerUIState extends State<PlayerUI> {
     return Positioned(
       left: (sprite.locH + offsetX).toDouble(), 
       top: (sprite.locV + offsetY).toDouble(), 
-      child: spriteWidget
+      child: buildSpriteGesturizer(sprite, spriteWidget)
     );
   }
 }

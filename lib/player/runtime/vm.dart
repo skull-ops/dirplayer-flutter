@@ -43,6 +43,7 @@ import '../../director/lingo/bytecode.dart';
 import '../../director/lingo/datum/list.dart';
 import 'cast_member.dart';
 import 'script.dart';
+import 'sprite.dart';
 
 enum HandlerExecutionResult {
   advance,
@@ -86,6 +87,7 @@ class PlayerVM with ChangeNotifier {
   final timeoutManager = TimeoutManager();
   DateTime startTime = DateTime.now();
   PublishSubject<PlayerVMExecutionItem> executionQueue = PublishSubject();
+  final IntPoint mouseLoc = IntPoint(0, 0);
 
   bool _isPlaying = false;
   bool _isScriptPaused = false;
@@ -776,6 +778,12 @@ class PlayerVM with ChangeNotifier {
         return Datum.ofInt(DateTime.now().difference(startTime).inMilliseconds);
       case "productVersion":
         return Datum.ofString("10.1");
+      case "mouseH":
+        return Datum.ofInt(mouseLoc.locH);
+      case "mouseV":
+        return Datum.ofInt(mouseLoc.locV);
+      case "mouseLoc":
+        return Datum.ofVarRef(mouseLoc);
       default:
         return movie.getProp(propName);
     }
@@ -998,6 +1006,18 @@ class PlayerVM with ChangeNotifier {
     stop();
   }
 
+  void dispatchToSprite(Sprite sprite, String eventName) async {
+    for (var scriptInstance in sprite.scriptInstanceList) {
+      var handlerPair = scriptInstance.getHandler(eventName);
+      if (handlerPair != null) {
+        var (script, handler) = handlerPair;
+        await reserve(() =>
+          callHandler(script, scriptInstance, handler, [Datum.ofVarRef(scriptInstance)])
+        );
+      }
+    }
+  }
+  
   Future dispatch(String name, List<Datum> args) async {
     // First stage behavior script
     // Then frame behavior script
@@ -1044,6 +1064,12 @@ class PlayerVM with ChangeNotifier {
 
   Future onExitFrame(int frame) async {
     await dispatch("exitFrame", []);
+  }
+
+  void onMouseMove(int x, int y) {
+    mouseLoc.locH = x;
+    mouseLoc.locV = y;
+    // TODO dispatch mouseMove
   }
 
   void goToFrame(int frame) {
