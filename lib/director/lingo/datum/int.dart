@@ -1,10 +1,12 @@
 import 'package:dirplayer/director/lingo/addable.dart';
+import 'package:dirplayer/player/runtime/prop_interface.dart';
 import 'package:logging/logging.dart';
 
 import '../../../common/codewriter.dart';
+import '../../../player/runtime/data_reference.dart';
 import '../datum.dart';
 
-class IntDatum extends Datum implements DatumEquatable, DatumComparable {
+class IntDatum extends Datum implements DatumEquatable, DatumComparable, PropInterface {
   final Logger log = Logger("IntDatum");
   int intValue;
 
@@ -43,6 +45,16 @@ class IntDatum extends Datum implements DatumEquatable, DatumComparable {
   @override 
   void writeScriptText(CodeWriter code, bool dot, bool sum) {
     code.write(intValue.toString());
+  }
+
+  @override
+  Ref<Datum>? getPropRef(String propName) {
+    switch (propName) {
+    case "ilk":
+      return CallbackRef(get: () => Datum.ofSymbol(ilk()));
+    default:
+      return null;
+    }
   }
 
   @override
