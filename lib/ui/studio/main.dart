@@ -20,8 +20,15 @@ import '../casts/field_inspector.dart';
 
 class DirStudio extends StatefulWidget {
   final DirPlayer player;
+  final bool autoPlay;
+  final String? initialMovieFileName;
 
-  const DirStudio({super.key, required this.player});
+  const DirStudio({
+    super.key, 
+    required this.player,
+    this.autoPlay = false,
+    this.initialMovieFileName = kIsWeb ? "dcr/habbo.dcr" : null
+  });
 
   @override
   State<StatefulWidget> createState() => _DirStudioState();
@@ -37,9 +44,16 @@ class _DirStudioState extends State<DirStudio> {
     super.initState();
 
     widget.player.vm.onScriptError = onScriptError;
-    String? preloadMovieName = kIsWeb ? "dcr/habbo.dcr" : null;
+    loadInitialMovie();
+  }
+
+  void loadInitialMovie() async {
+    String? preloadMovieName = widget.initialMovieFileName;
     if (preloadMovieName != null && preloadMovieName.isNotEmpty) {
-      widget.player.loadMovie(preloadMovieName).then((_) => setState(() { isFilePicked = true; }));
+      await widget.player.loadMovie(preloadMovieName).then((_) => setState(() { isFilePicked = true; }));
+      if (widget.autoPlay) {
+        widget.player.play();
+      }
     }
   }
 
@@ -119,6 +133,9 @@ class _DirStudioState extends State<DirStudio> {
       setState(() {
         isFilePicked = true;
       });
+      if (widget.autoPlay) {
+        widget.player.play();
+      }
     }
   }
 
