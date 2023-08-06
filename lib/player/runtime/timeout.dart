@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dirplayer/common/exceptions.dart';
 import 'package:dirplayer/director/lingo/datum.dart';
 import 'package:dirplayer/player/runtime/data_reference.dart';
 import 'package:dirplayer/player/runtime/prop_interface.dart';
@@ -31,7 +32,7 @@ class TimeoutRef implements HandlerInterface, PropInterface {
       timeoutManager.forgetTimeout(name);
       return Datum.ofVoid();
     default:
-      throw Exception("Unknown handler $handlerName on $this");
+      throw UnknownHandlerException(handlerName, this);
     }
   }
 

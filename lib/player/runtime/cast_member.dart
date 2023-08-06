@@ -1,3 +1,4 @@
+import 'package:dirplayer/common/exceptions.dart';
 import 'package:dirplayer/director/castmembers.dart';
 import 'package:dirplayer/director/chunks/cast_member.dart';
 import 'package:dirplayer/director/lingo/datum.dart';
@@ -342,7 +343,7 @@ class TextMember extends Member implements HandlerInterface {
         return Datum.ofVarRef(IntPoint(charWidth * (charPos - 1), lineHeight));
       }
     default:
-      return Future.error(Exception("Unknown handler $handlerName for $this"));
+      return Future.error(UnknownHandlerException(handlerName, this));
     }
   }
 }

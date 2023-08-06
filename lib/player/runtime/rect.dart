@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dirplayer/common/exceptions.dart';
 import 'package:dirplayer/director/lingo/addable.dart';
 import 'package:dirplayer/director/lingo/datum.dart';
 import 'package:dirplayer/director/lingo/datum/list.dart';
@@ -81,7 +82,7 @@ class IntPoint extends PropInterface implements Addable, Subtractable, HandlerIn
       var listValue = [locH, locV];
       return Datum.ofInt(listValue[pos - 1]);
     default:
-      throw Exception("Unknown handler $handlerName for $this");
+      throw UnknownHandlerException(handlerName, this);
     }
   }
 }
@@ -137,7 +138,7 @@ class IntRect extends PropInterface implements HandlerInterface, Addable, Subtra
       listValue[pos - 1] = value;
       return Datum.ofVoid();
     default:
-      return Future.error(Exception("Unknown handler $handlerName for $this"));
+      return Future.error(UnknownHandlerException(handlerName, this));
     }
   }
 

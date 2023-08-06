@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
+import 'package:dirplayer/common/exceptions.dart';
 import 'package:dirplayer/director/lingo/datum.dart';
 import 'package:dirplayer/director/lingo/datum/list.dart';
 import 'package:dirplayer/director/lingo/datum/prop_list.dart';
@@ -247,7 +248,7 @@ class ImageRef implements PropInterface, HandlerInterface {
       print("!!! TODO !!! ImageRef.trimWhiteSpace");
       return Datum.ofVarRef(clone());
     default:
-      return Future.error(Exception("Unknown handler $handlerName for $this"));
+      return Future.error(UnknownHandlerException(handlerName, this));
     }
   }
 

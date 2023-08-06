@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:dirplayer/common/exceptions.dart';
 import 'package:dirplayer/director/lingo/datum.dart';
 import 'package:dirplayer/director/lingo/datum/list.dart';
 import 'package:dirplayer/director/lingo/datum/var_ref.dart';
@@ -373,6 +374,6 @@ class Sprite extends VMPropInterface implements HandlerInterface {
         return await script.callHandler(vm, handlerName, argList);
       }
     }
-    throw Exception("Unknown handler $handlerName for $this");
+    throw UnknownHandlerException(handlerName, this);
   }
 }

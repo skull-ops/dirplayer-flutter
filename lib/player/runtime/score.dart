@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dirplayer/common/exceptions.dart';
 import 'package:dirplayer/director/file.dart';
 import 'package:dirplayer/director/lingo/datum.dart';
 import 'package:dirplayer/player/runtime/cast_member.dart';
@@ -80,7 +81,7 @@ class CastMemberReference with EquatableMixin implements VMPropInterface, Handle
       if (member != null && member is HandlerInterface) {
         return (member as HandlerInterface).callHandler(vm, handlerName, argList);
       } else {
-        throw Exception("Unknown handler $handlerName for $this");
+        throw UnknownHandlerException(handlerName, this);
       }
     }
   }

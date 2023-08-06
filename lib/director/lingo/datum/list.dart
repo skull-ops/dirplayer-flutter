@@ -9,6 +9,7 @@ import 'package:dirplayer/player/runtime/prop_interface.dart';
 import 'package:dirplayer/player/runtime/rect.dart';
 
 import '../../../common/codewriter.dart';
+import '../../../common/exceptions.dart';
 import '../../../player/runtime/vm.dart';
 import '../datum.dart';
 
@@ -154,7 +155,7 @@ class ListDatum extends Datum implements HandlerInterface, PropInterface, Addabl
       var element = args.first;
       return Datum.ofInt(value.indexOf(element) + 1);
     }
-    throw Exception("Unknown handler $handlerName for list");
+    throw UnknownHandlerException(handlerName, this);
   }
 
   @override

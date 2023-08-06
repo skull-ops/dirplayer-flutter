@@ -1,3 +1,4 @@
+import 'package:dirplayer/common/exceptions.dart';
 import 'package:dirplayer/director/castmembers.dart';
 import 'package:dirplayer/director/chunks/script.dart';
 import 'package:dirplayer/director/lingo/datum.dart';
@@ -49,7 +50,7 @@ class Script implements HandlerInterface {
       var (handlerScript, handler) = handlerPair;
       return await vm.callHandler(handlerScript, null, handler, argList);
     } else {
-      throw Exception("Unknown handler $handlerName on $this");
+      throw UnknownHandlerException(handlerName, this);
     }
   }
 
@@ -160,7 +161,7 @@ class ScriptInstance implements HandlerInterface, PropInterface, CustomSetPropIn
         throw Exception("Invalid count call");
       }
     default:
-      throw Exception("Unknown handler $handlerName($args) on $this");
+      throw UnknownHandlerException("$handlerName($args)", this);
     }
   }
 

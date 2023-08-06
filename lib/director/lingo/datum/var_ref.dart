@@ -1,4 +1,5 @@
 
+import 'package:dirplayer/common/exceptions.dart';
 import 'package:dirplayer/player/runtime/cast_member.dart';
 import 'package:dirplayer/player/runtime/data_reference.dart';
 import 'package:dirplayer/player/runtime/prop_interface.dart';
@@ -48,7 +49,7 @@ class VarRefDatum extends Datum implements HandlerInterface, VMPropInterface, Pr
     if (value is HandlerInterface) {
       return await value.callHandler(vm, handlerName, argList);
     } else {
-      return Future.error(Exception("Unknown handler $handlerName for $value"));
+      return Future.error(UnknownHandlerException(handlerName, value));
     }
   }
 

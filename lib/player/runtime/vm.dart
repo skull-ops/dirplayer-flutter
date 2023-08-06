@@ -867,7 +867,7 @@ class PlayerVM with ChangeNotifier {
       case DatumType.kDatumPropList:
         return PropListWrapper.callHandler(this, obj, handlerName, argList);
       default:
-        return Future.error(Exception("Unknown handler $handlerName for $obj"));
+        return Future.error(UnknownHandlerException(handlerName, this));
       }
     }
   }
