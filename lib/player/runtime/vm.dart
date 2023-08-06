@@ -623,10 +623,15 @@ class PlayerVM with ChangeNotifier {
         }
         result = Datum.ofVoid();
       } else if (receiver is ListDatum) {
+        result = Datum.ofNull();
         for (var value in receiver.value.toList()) {
-          await callObjectHandler(value, handlerName.stringValue(), args);
+          // TODO check if receiver has handler
+          try {
+            result = await callObjectHandler(value, handlerName.stringValue(), args);
+          } on UnknownHandlerException catch (_) {
+            // No handling needed
+          }
         }
-        result = Datum.ofVoid();
       } else if (receiver is HandlerInterface) {
         result = await (receiver as HandlerInterface).callHandler(this, handlerName.stringValue(), args);
       } else {
