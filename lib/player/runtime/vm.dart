@@ -630,7 +630,7 @@ class PlayerVM with ChangeNotifier {
       } else if (receiver is ListDatum) {
         result = Datum.ofNull();
         for (var value in receiver.value.toList()) {
-          // TODO check if receiver has handler
+          // TODO check if receiver has handler, catching an exception will result in a broken stack
           try {
             result = await callObjectHandler(value, handlerName.stringValue(), args);
           } on UnknownHandlerException catch (_) {
