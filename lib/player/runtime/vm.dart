@@ -920,7 +920,13 @@ class PlayerVM with ChangeNotifier {
       if (breakpoint != null) {
         await triggerBreakpoint(breakpoint, script, handler, bytecode);
       }
-      var result = await executeBytecode(bytecode);
+      HandlerExecutionResult result;
+      try {
+        result = await executeBytecode(bytecode).catchError((e) => throw e);
+      } catch (e) {
+        scopes.remove(scope);
+        return Future.error(e);
+      }
       switch (result) {
       case HandlerExecutionResult.advance:
         scope.handlerPosition++;
