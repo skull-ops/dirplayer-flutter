@@ -768,6 +768,9 @@ class PlayerVM with ChangeNotifier {
       } else {
         return Future.error(Exception("Unknown xtra $xtraName"));
       }
+    case "stopEvent":
+      // TODO stopEvent
+      break;
     default:
       return Future.error(Exception("Handler not defined $name($argList)"));
     }
