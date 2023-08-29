@@ -1009,12 +1009,12 @@ class PlayerVM with ChangeNotifier {
       if (error is CancelledException) {
         // Do nothing
       } else {
-        log.severe("[!!] play failed with error: ${error.toString()}");
+        print("[!!] play failed with error: ${error.toString()}");
         for (var scope in scopes.reversed) {
           var currentBytecode = scope.handler.bytecodeArray[scope.handlerPosition];
-          log.severe("at ${scope.script}.${scope.handler.name}:${currentBytecode.pos} => receiver ${scope.receiver}");
+          print("at ${scope.script}.${scope.handler.name}:${currentBytecode.pos} => receiver ${scope.receiver}");
         }
-        log.severe("");
+        print("");
         onScriptError?.call(currentScope!, error);
       }
       return Future.error(error);
