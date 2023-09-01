@@ -129,6 +129,14 @@ class PlayerVM with ChangeNotifier {
     await loadMovieDir(dir);
   }
 
+  void loadCastFromDirFile(int castLibNumber, DirectorFile castFile) {
+    var cast = movie.castManager.getCastByNumber(castLibNumber);
+    if (cast != null) {
+      cast.loadFromDirFile(castFile, castFile.fileName);
+      notifyListeners();
+    }
+  }
+
   Future play() async {
     if (_isPlaying) {
       return;

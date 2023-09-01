@@ -101,13 +101,7 @@ class CastLib extends PropInterface {
       var castBytes = result.bytes;
       var castFile = DirectorFile(getBaseUri(Uri.parse(loadFileName)), loadFileName, Reader(data: castBytes.buffer));
       if (castFile.read()) {
-        castFile.parseScripts();
-
-        var castChunk = castFile.casts.first;
-        fileName = loadFileName;
-        name = basenameWithoutExtension(fileName);
-        applyCastChunk(castFile, castChunk);
-        print("Loaded $loadFileName");
+        loadFromDirFile(castFile, loadFileName);
       } else {
         print("Could not parse $loadFileName");
       }
@@ -115,6 +109,17 @@ class CastLib extends PropInterface {
     } else {
       print("Fetching $loadFileName failed");
     }
+  }
+
+  void loadFromDirFile(DirectorFile castFile, String loadFileName) {
+    clear();
+    castFile.parseScripts();
+
+    var castChunk = castFile.casts.first;
+    fileName = loadFileName;
+    name = basenameWithoutExtension(fileName);
+    applyCastChunk(castFile, castChunk);
+    print("Loaded $loadFileName");
   }
 
   Script scriptChunkToScript(

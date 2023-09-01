@@ -9,6 +9,7 @@ import 'package:dirplayer/ui/player/main.dart';
 import 'package:dirplayer/ui/player/wrapper.dart';
 import 'package:dirplayer/ui/score/score_inspector.dart';
 import 'package:dirplayer/ui/scripting/script_inspector.dart';
+import 'package:dirplayer/ui/ui_utils.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -111,25 +112,20 @@ class _DirStudioState extends State<DirStudio> {
         children: [
           buildTimeToolBar(),
           ScoreInspector(player: widget.player),
-          CastsWindow(
+          Expanded(child: CastsWindow(
             player: widget.player,
             onSelectMember: (ref) { selectMember(ref); },
             selectedMember: selectedMemberRef,
-          ),
+          )),
         ],
       ),
     );
   }
 
   void pickAndLoadMovie() async {
-    var result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      var file = result.files.single;
-      if (kIsWeb) {
-        await widget.player.vm.loadMovieFromBytes(file.bytes!, file.name);
-      } else {
-        await widget.player.vm.loadMovieFromFile(file.path!);
-      }
+    var dirFile = await pickAndLoadDirFile(widget.player);
+    if (dirFile != null) {
+      await widget.player.vm.loadMovieDir(dirFile);
       setState(() {
         isFilePicked = true;
       });

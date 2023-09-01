@@ -6,6 +6,7 @@ import 'package:dirplayer/player/runtime/score.dart';
 import 'package:dirplayer/ui/components/inspector.dart';
 import 'package:dirplayer/ui/components/selectable_container.dart';
 import 'package:dirplayer/ui/components/tree_view.dart';
+import 'package:dirplayer/ui/ui_utils.dart';
 import 'package:flutter/material.dart';
 
 typedef OnSelectMemberCallback = Function(CastMemberReference memberRef);
@@ -27,8 +28,8 @@ class _CastsWindowState extends State<CastsWindow> {
     return ListenableBuilder(
       listenable: Listenable.merge([widget.player.vm.movie.castManager, widget.player.vm]),
       builder: (context, child) => Inspector(
-        title: "Casts",
-        child: SizedBox(width: double.infinity, height: 500, child: buildContent())
+        title: "Casts", 
+        child: Expanded(child: buildContent())
       ),
     );
   }
@@ -36,19 +37,42 @@ class _CastsWindowState extends State<CastsWindow> {
   Widget buildContent() {
     var vm = widget.player.vm;
     
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          for (var cast in vm.movie.castManager.casts) buildCast(cast)
-        ],
-      )
+    return CustomScrollView(
+      slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (var cast in vm.movie.castManager.casts) buildCast(cast)
+            ],
+          )
+        )
+      ]
     );
   }
 
   Widget buildCast(CastLib cast) {
     return TreeView(
-      label: Text(cast.name), 
+      label: Expanded(
+        child: Row(
+          children: [
+            Expanded(child: Text(cast.name)),
+            ...cast.isExternal ? [
+              IconButton(
+                splashRadius: 8,
+                onPressed: () async {
+                  var castFile = await pickAndLoadDirFile(widget.player);
+                  if (castFile != null) {
+                    widget.player.vm.loadCastFromDirFile(cast.number, castFile);
+                  }
+                }, 
+                icon: const Icon(Icons.folder),
+              )
+            ] : [],
+          ]
+        )
+      ), 
       children: () => [
         for (var member in cast.members.values) buildMemberNode(member),
         const Divider(height: 4,)
