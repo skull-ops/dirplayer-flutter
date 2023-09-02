@@ -36,11 +36,26 @@ class TimeoutRef implements HandlerInterface, PropInterface {
     }
   }
 
+  Timeout? getTimeout() {
+    return timeoutManager.getTimeout(name);
+  }
+
   @override
   Ref<Datum>? getPropRef(String propName) {
     switch (propName) {
     case "name":
       return CallbackRef(get: () => Datum.ofString(name));
+    case "target":
+      return MutableCallbackRef(
+        get: () => getTimeout()?.targetObject ?? Datum.ofVoid(),
+        set: (target) {
+          if (target.isVoid()) {
+            getTimeout()?.targetObject = null;
+          } else {
+            getTimeout()?.targetObject = target;
+          }
+        }
+      );
     default:
       return null;
     }
