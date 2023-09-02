@@ -61,6 +61,7 @@ class ExtCallResult {
 }
 
 typedef OnScriptErrorCallback = void Function(Scope scope, dynamic err);
+typedef OnBreakpointCallback = void Function(Scope scope, BreakpointContext breakpoint);
 typedef PlayerVMExecutionCallback = Future<Datum> Function();
 
 class PlayerVMExecutionItem {
@@ -78,6 +79,7 @@ class PlayerVM with ChangeNotifier {
   Map<String, Datum> globals = {};
   String itemDelimiter = ".";
   OnScriptErrorCallback? onScriptError;
+  OnBreakpointCallback? onBreakpoint;
   final BreakpointManager breakpointManager = BreakpointManager();
   BreakpointContext? currentBreakpoint;
   final random = Random();
@@ -638,11 +640,19 @@ class PlayerVM with ChangeNotifier {
       } else if (receiver is ListDatum) {
         result = Datum.ofNull();
         for (var value in receiver.value.toList()) {
-          // TODO check if receiver has handler, catching an exception will result in a broken stack
-          try {
+          bool containsHandler = false;
+          if (value is VarRefDatum && value.value is Script) {
+            var scriptValue = value.toRef<Script>();
+            containsHandler = scriptValue.getHandler(handlerName.stringValue()) != null;
+          } else if (value is VarRefDatum && value.value is ScriptInstance) {
+            var scriptValue = value.toRef<ScriptInstance>();
+            containsHandler = scriptValue.getHandler(handlerName.stringValue()) != null;
+          } else {
+            return Future.error(Exception("call() with unsupported receiver: $value"));
+          }
+
+          if (containsHandler) {
             result = await callObjectHandler(value, handlerName.stringValue(), args);
-          } on UnknownHandlerException catch (_) {
-            // No handling needed
           }
         }
       } else if (receiver is HandlerInterface) {
@@ -868,9 +878,6 @@ class PlayerVM with ChangeNotifier {
   }
 
   Future<HandlerExecutionResult> executeBytecode(Bytecode bytecode) async {
-    //var code = CodeWriter();
-    //bytecode.writeBytecodeText(code, movie.dotSyntax);
-    //print("> ${code.str()}");
     return await bytecodeHandlerManager.executeBytecode(this, bytecode);
   }
 
@@ -915,7 +922,7 @@ class PlayerVM with ChangeNotifier {
     return await callBuiltinHandler(name, argList);
   }
 
-  Future<Datum> callHandler(Script script, ScriptInstance? receiver, Handler handler, List<Datum> argList) async {
+    Future<Datum> callHandler(Script script, ScriptInstance? receiver, Handler handler, List<Datum> argList) async {
     log.finer("Calling $script.${handler.name}(${argList.map((it) => it.type).join(", ")}) - receiver $receiver");
 
     var scope = Scope(script, receiver, handler, argList);
@@ -932,7 +939,7 @@ class PlayerVM with ChangeNotifier {
       try {
         result = await executeBytecode(bytecode).catchError((e) => throw e);
       } catch (e) {
-        scopes.remove(scope);
+        // TODO: remove scope from stack if exception is caught
         return Future.error(e);
       }
       switch (result) {
@@ -963,6 +970,7 @@ class PlayerVM with ChangeNotifier {
     );
     currentBreakpoint = context;
     notifyListeners();
+    onBreakpoint?.call(currentScope!, context);
 
     pauseScript();
     await completer.future;
@@ -1018,18 +1026,26 @@ class PlayerVM with ChangeNotifier {
     return await item.completer.future;
   }
 
+  Future _onScriptError(ScriptExecutionException exception) async {
+    var errorScope = exception.lingoStack.lastOrNull;
+    print(exception);
+    print(exception.lingoStackTrace());
+    
+    if (errorScope != null) {
+      var breakpoint = Breakpoint(errorScope.script.name, errorScope.handler.name, errorScope.handlerPosition);
+      await triggerBreakpoint(breakpoint, errorScope.script, errorScope.handler, errorScope.handler.bytecodeArray[errorScope.handlerPosition]);
+    }
+    onScriptError?.call(errorScope!, exception);
+  }
+
   Future runVM() async {
-    Future<Datum> onError(dynamic error) {
+    Future<Datum> onError(dynamic error) async {
       if (error is CancelledException) {
         // Do nothing
       } else {
         print("[!!] play failed with error: ${error.toString()}");
-        for (var scope in scopes.reversed) {
-          var currentBytecode = scope.handler.bytecodeArray[scope.handlerPosition];
-          print("at ${scope.script}.${scope.handler.name}:${currentBytecode.pos} => receiver ${scope.receiver}");
-        }
-        print("");
-        onScriptError?.call(currentScope!, error);
+        await _onScriptError(ScriptExecutionException(error, [...scopes]));
+        stop();
       }
       return Future.error(error);
     }
@@ -1039,7 +1055,7 @@ class PlayerVM with ChangeNotifier {
         break;
       }
       try {
-        item.completer.complete(await item.callback().catchError(Future<Datum>.error));
+        item.completer.complete(await item.callback().catchError((e) => throw e));
       } catch (err) {
         await onError(err);
         break;

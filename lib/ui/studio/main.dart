@@ -1,4 +1,5 @@
 import 'package:dirplayer/player/runtime/cast_member.dart';
+import 'package:dirplayer/player/runtime/debug/breakpoint_context.dart';
 import 'package:dirplayer/player/runtime/scope.dart';
 import 'package:dirplayer/player/runtime/score.dart';
 import 'package:dirplayer/player/runtime/script.dart';
@@ -45,6 +46,7 @@ class _DirStudioState extends State<DirStudio> {
     super.initState();
 
     widget.player.vm.onScriptError = onScriptError;
+    widget.player.vm.onBreakpoint = onBreakpoint;
     loadInitialMovie();
   }
 
@@ -65,6 +67,11 @@ class _DirStudioState extends State<DirStudio> {
   }
 
   void onScriptError(Scope scope, dynamic err) {
+    var member = widget.player.vm.movie.castManager.findMemberForScript(scope.script);
+    selectMember(member!.reference);
+  }
+
+  void onBreakpoint(Scope scope, BreakpointContext breakpoint) {
     var member = widget.player.vm.movie.castManager.findMemberForScript(scope.script);
     selectMember(member!.reference);
   }
