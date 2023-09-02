@@ -2,6 +2,7 @@ import 'package:dirplayer/common/exceptions.dart';
 import 'package:dirplayer/director/castmembers.dart';
 import 'package:dirplayer/director/chunks/script.dart';
 import 'package:dirplayer/director/lingo/datum.dart';
+import 'package:dirplayer/director/lingo/datum/int.dart';
 import 'package:dirplayer/director/lingo/datum/list.dart';
 import 'package:dirplayer/director/lingo/datum/prop_list.dart';
 import 'package:dirplayer/director/lingo/handler.dart';
@@ -146,7 +147,11 @@ class ScriptInstance implements HandlerInterface, PropInterface, CustomSetPropIn
       var localPropName = args[0].stringValue();
       var listPropName = args[1];//.stringValue();
       var list = getPropRef(localPropName)!.get().toMap();
-      return list[listPropName] ?? Datum.ofVoid();
+      if (listPropName is IntDatum) {
+        return list.values.elementAtOrNull(listPropName.intValue - 1) ?? Datum.ofVoid();
+      } else {
+        return list[listPropName] ?? Datum.ofVoid();
+      }
     case "handler":
       var name = args.first.stringValue();
       return Datum.ofBool(script.getHandler(name) != null);
