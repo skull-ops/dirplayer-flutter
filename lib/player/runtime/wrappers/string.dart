@@ -30,6 +30,8 @@ class StringWrapper {
 
   static int getCount(String value, String operand, String delimiter) {
     switch (operand) {
+      case "char":
+        return value.length;
       case "item":
         return getItems(value, delimiter).length;
       case "word":

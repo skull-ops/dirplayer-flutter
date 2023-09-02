@@ -12,6 +12,7 @@ import 'package:dirplayer/player/runtime/prop_interface.dart';
 import 'package:dirplayer/player/runtime/rect.dart';
 import 'package:dirplayer/player/runtime/score.dart';
 import 'package:dirplayer/player/runtime/vm.dart';
+import 'package:dirplayer/player/runtime/wrappers/string.dart';
 import 'package:image/image.dart' as img;
 
 class InvalidMember implements PropInterface {
@@ -350,6 +351,10 @@ class TextMember extends Member implements HandlerInterface {
       } else {
         return Datum.ofVarRef(IntPoint(charWidth * (charPos - 1), lineHeight));
       }
+    case "count":
+      var countOf = argList.first.stringValue();
+      assert(argList.length == 1);
+      return Datum.ofInt(StringWrapper.getCount(text, countOf, vm.itemDelimiter));
     default:
       return Future.error(UnknownHandlerException(handlerName, argList, this));
     }
