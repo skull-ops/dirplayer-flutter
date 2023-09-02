@@ -48,6 +48,9 @@ class MultiuserXtraInstance implements HandlerInterface {
       var encryptionKey = argList.elementAtOrNull(6);
       // TODO
       break;
+    case "sendNetMessage":
+      // TODO
+      break;
     default:
       return Future.error(UnknownHandlerException(handlerName, argList, this));
     }
