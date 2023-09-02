@@ -495,7 +495,11 @@ class PlayerVM with ChangeNotifier {
     }
     case "string": {
       var obj = argList.first;
-      result = Datum.ofString(obj.toString());
+      if (obj is StringDatum) {
+        return obj;
+      } else {
+        result = Datum.ofString(obj.toString());
+      }
       break;
     }
     case "put": {
